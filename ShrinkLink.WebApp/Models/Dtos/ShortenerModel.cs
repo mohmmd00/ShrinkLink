@@ -2,7 +2,7 @@
 
 namespace ShrinkLink.WebApp.Models.Dtos
 {
-    public class ShortenerViewModel
+    public class ShortenerModel
     {
         public ShortLinkTransferObject Response { get; set; } = new();
         public LongLinkTransferObject Request { get; set; } = new();

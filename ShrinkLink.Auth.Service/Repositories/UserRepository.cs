@@ -13,15 +13,22 @@ namespace ShrinkLink.Auth.Service.Repositories
             _context = context;
         }
 
-        public async Task CreateAsync(User user, CancellationToken ct)
+        public async Task CreateAsync(User user, CancellationToken ct = default)
         {
             await _context.Users.AddAsync(user, ct);
             await _context.SaveChangesAsync(ct);
         }
 
-        public async Task<bool> IsUserExistsByUsername(string username, CancellationToken ct)
+        public async Task<bool> IsUserExistsByUsername(string username, CancellationToken ct = default)
         {
-            return await _context.Users.AnyAsync(x => x.Username == username, ct);
+            return await _context.Users.AnyAsync(x=>x.Username == username, ct);
+        }
+
+
+        public async Task<User> FetchUserByUsername(string username, CancellationToken ct = default)
+        {
+            var selectedUser = await _context.Users.FirstOrDefaultAsync(x => x.Username == username , ct);
+            return selectedUser;
         }
     }
 }

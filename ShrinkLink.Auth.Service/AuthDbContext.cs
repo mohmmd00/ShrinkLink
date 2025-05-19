@@ -21,9 +21,8 @@ namespace ShrinkLink.Auth.Service
                 builder.Property(x => x.Username).IsRequired().HasMaxLength(64);
                 builder.Property(x => x.Email).IsRequired().HasMaxLength(256);
                 builder.Property(x => x.PasswordHash).IsRequired();
-                builder.Property(x => x.PasswordSalt).IsRequired();
+                builder.Property(x => x.PasswordSalt);
                 builder.Property(x => x.CreatedAt);
-                builder.Property(x => x.LastLogin);
 
 
                 //using indexing for faster searching

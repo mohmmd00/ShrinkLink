@@ -16,7 +16,6 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="Data\" />
-    <Folder Include="Models\" />
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
@@ -31,7 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AuthService.Webapp.Contracts\AuthService.Webapp.Contracts.csproj" />
     <ProjectReference Include="..\Shared.Contracts\UrlShortener.Webapp.Contracts.csproj" />
+    <ProjectReference Include="..\UrlShortener.Webapp.Contracts\UrlShortener.Webapp.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

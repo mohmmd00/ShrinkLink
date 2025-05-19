@@ -11,13 +11,21 @@ namespace ShrinkLink.WebApp
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<WebRequestHandlerApplication>();
+            builder.Services.AddScoped<WebRequestHandler>();
 
 
             var baseAddress = builder.Configuration["ApiSettings:BaseAddress"];
-            builder.Services.AddHttpClient<WebRequestHandlerApplication>(client =>
+            var authApiAddress = builder.Configuration["ApiSettings:AuthAddress"];
+
+
+
+            builder.Services.AddHttpClient<WebRequestHandler>("Shortener",client =>
             {
                 client.BaseAddress = new Uri(baseAddress);
+            });
+            builder.Services.AddHttpClient<WebRequestHandler>("Auth", client =>
+            {
+                client.BaseAddress = new Uri(authApiAddress);
             });
             
 

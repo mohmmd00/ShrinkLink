@@ -15,26 +15,23 @@ namespace ShrinkLink.UrlShortener.Service
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-
             var connectionString = builder.Configuration.GetConnectionString("Cn1");
-
-            builder.Services.AddDbContext<UrlShortenerDbContext>(x =>
-                x.UseSqlServer(connectionString));
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("Connection string 'Cn1' not found.");
             }
+            builder.Services.AddDbContext<UrlShortenerDbContext>(x =>
+                x.UseSqlServer(connectionString));
+
 
             builder.Services.AddScoped<IShortenUrlRepository, ShortenUrlRepository>();
             builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
             builder.Services.AddScoped<IVisitorRepository, VisitorRepository>();
 
-            
+            builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 

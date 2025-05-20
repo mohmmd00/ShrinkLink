@@ -1,5 +1,7 @@
 ﻿using AuthService.Webapp.Contracts.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using ShrinkLink.Auth.Service.Models.DataTransferObjects;
+using ShrinkLink.Auth.Service.Models.Entities;
 using ShrinkLink.Auth.Service.Services;
 
 namespace ShrinkLink.Auth.Service.Controllers
@@ -29,7 +31,7 @@ namespace ShrinkLink.Auth.Service.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody]LoginTransferObject request, CancellationToken ct)
+        public async Task<IActionResult> Login([FromBody] LoginTransferObject request, CancellationToken ct)
         {
             var tokenResponse = await _authorizationService.Login(request, ct);
             if (tokenResponse != null)
@@ -40,6 +42,19 @@ namespace ShrinkLink.Auth.Service.Controllers
             {
                 return BadRequest("username or password is incorrect");
             }
+        }
+
+        [HttpGet("UserBaseDetails/{id}")]
+        public async Task<UserBaseInformationTransferObject> GetUserById(string id, CancellationToken ct = default)
+        {
+            var fetchedUser = await _authorizationService.UserDetails(id, ct);
+
+            var userBaseInfo = new UserBaseInformationTransferObject()
+            {
+                Id = fetchedUser.Id,
+                Username = fetchedUser.Username
+            };
+            return userBaseInfo;
         }
     }
 }

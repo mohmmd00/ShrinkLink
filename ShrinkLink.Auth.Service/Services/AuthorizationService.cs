@@ -40,7 +40,7 @@ namespace ShrinkLink.Auth.Service.Services
                         RoleId = _roleRepository.FetchRolesIdAsync("User").Result,
                     };
                     await _userRepository.CreateAsync(newUser, ct);
-                    return new RegisterResponseTransferObject(){Message = "register was successful"};
+                    return new RegisterResponseTransferObject() { Message = "register was successful" };
                 }
             }
 
@@ -48,7 +48,6 @@ namespace ShrinkLink.Auth.Service.Services
 
 
         }
-
         public async Task<LoginResponseTransferObject> Login(LoginTransferObject request, CancellationToken ct)
         {
             var fetchedWantedUser = await _userRepository.FetchUserByUsername(request.Username, ct);
@@ -75,6 +74,12 @@ namespace ShrinkLink.Auth.Service.Services
             return null;
 
 
+        }
+
+        public async Task<User> UserDetails(string id, CancellationToken ct)
+        {
+            var fetchedUser = await _userRepository.FetchUserById(id , ct);
+            return fetchedUser;
         }
         private string GenerateJwtToken(User user)
         {

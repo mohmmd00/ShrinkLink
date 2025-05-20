@@ -4,17 +4,17 @@
     {
         public Guid Id { get; }
         public string OriginalUrl { get; private set; }
-        public string Username { get; private set; }
+        public string UserId { get; private set; }
         public string Code { get; private set; }
         public string CreatedAt { get; private set; } // beware of the change of this property !!!!
 
         public List<Visitor> Visitors { get; set; } //navigation prop
 
 
-        public ProcessedUrl(string originalUrl, string code, string username)
+        public ProcessedUrl(string originalUrl, string code, string userId)
         {
             Id = Guid.NewGuid();
-            Username = username;
+            UserId = userId;
             OriginalUrl = originalUrl;
             Code = code;
             CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

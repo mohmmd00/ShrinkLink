@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using ShrinkLink.WebApp.Models;
 using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using ShrinkLink.WebApp.Models.Dtos;
 using ShrinkLink.WebApp.Services;
-using NuGet.Common;
 using ShrinkLink.WebApp.attribute;
 
 namespace ShrinkLink.WebApp.Controllers
@@ -43,53 +41,29 @@ namespace ShrinkLink.WebApp.Controllers
             }
         }
 
-        public IActionResult RegisterPage()
+        public async Task<IActionResult> RegisterPage()
         {
             return View("RegisterPage");
         }
 
-        public IActionResult LoginPage()
+        public async Task<IActionResult> LoginPage()
         {
             return View("LoginPage");
         }
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterModel model)
+        {
+            var result = _application.PostRegisterRequest(model.TransferObject);
+            if (result != null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+            else
+            {
+                return View("RegisterPage");
+            }
 
-
-        //aslan in inja nabayad bashe in bayad too dashboard bashe 
-        //[HttpPost]
-        //public async Task<IActionResult> PostLongUrl(ShortenerModel request)
-        //{
-        //    var token = Request.Cookies["jwt-token"];
-
-        //    if (token == null)
-        //    {
-        //        return RedirectToAction("Login");
-        //    }
-
-        //    var result = await _application.PostLinkHandlerAsync(request.Request, token);
-        //    var test = new ShortenerModel
-        //    {
-        //        Request = request.Request,
-        //        Response = result
-        //    };
-
-        //    return View("Index", test);
-        //}
-
-
-
-        //[HttpPost]
-        //public async Task<IActionResult> Register(RegisterModel model)
-        //{
-        //    var result = _application.PostRegisterRequest(model.TransferObject);
-
-
-        //}
-
-
-
-
-
-
+        }
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {

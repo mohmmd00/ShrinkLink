@@ -21,11 +21,17 @@ namespace ShrinkLink.UrlShortener.Service
             {
                 builder.ToTable ("ShortenUrl");
                 builder.HasKey  (x => x.Id);
+
+
+                builder.Property(x => x.UserId).IsRequired();
                 builder.Property(x => x.Code).IsRequired().HasMaxLength(UrlShortenerService.NumberOfCharsInShortLink);
-                builder.HasIndex(x => x.Code).IsUnique();
                 builder.Property(x => x.OriginalUrl).IsRequired().HasMaxLength(1024);
-                builder.Property(x => x.ShortUrl).IsRequired();
                 builder.Property(x => x.CreatedAt).IsRequired();
+
+
+
+                builder.HasIndex(x => x.Code).IsUnique();
+
                 builder.HasMany(S => S.Visitors)
                     .WithOne(V => V.ProcessedUrl)
                     .HasForeignKey(V => V.ShortenGuidId);
@@ -36,6 +42,8 @@ namespace ShrinkLink.UrlShortener.Service
             {
                 builder.ToTable ("Visitor");
                 builder.HasKey  (x => x.PrimaryId);
+
+
                 builder.Property(x => x.Code).IsRequired();
                 builder.Property(x => x.IpAddress).IsRequired();
                 builder.Property(x => x.Country);
@@ -45,6 +53,8 @@ namespace ShrinkLink.UrlShortener.Service
                 builder.Property(x => x.UserAgent);
                 builder.Property(x => x.ClickedAt);
                 builder.Property(x => x.RedirectSuccessful);
+
+
                 builder.HasOne(V => V.ProcessedUrl)
                     .WithMany(S => S.Visitors)
                     .HasForeignKey(V => V.ShortenGuidId);

@@ -10,9 +10,9 @@ namespace ShrinkLink.UrlShortener.Service.Services
         private const string Alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
         private readonly Random _random = new Random();
-        private readonly IShortenUrlRepository _repository;
+        private readonly IProcessedUrlRepository _repository;
 
-        public UrlShortenerService(IShortenUrlRepository repository)
+        public UrlShortenerService(IProcessedUrlRepository repository)
         {
             _repository = repository;
         }

@@ -24,7 +24,7 @@ namespace ShrinkLink.UrlShortener.Service
                 x.UseSqlServer(connectionString));
 
 
-            builder.Services.AddScoped<IShortenUrlRepository, ShortenUrlRepository>();
+            builder.Services.AddScoped<IProcessedUrlRepository, ProcessedUrlRepository>();
             builder.Services.AddScoped<IUrlShortenerService, UrlShortenerService>();
             builder.Services.AddScoped<IVisitorRepository, VisitorRepository>();
 

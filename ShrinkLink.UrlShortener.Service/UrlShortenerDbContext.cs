@@ -7,7 +7,7 @@ namespace ShrinkLink.UrlShortener.Service
 {
     public class UrlShortenerDbContext : DbContext
     {
-        public DbSet<ShortenUrl> Links { get; set; }
+        public DbSet<ProcessedUrl> Links { get; set; }
         public DbSet<Visitor> Visitors { get; set; }
 
         public UrlShortenerDbContext(DbContextOptions<UrlShortenerDbContext> options) : base(options)
@@ -17,7 +17,7 @@ namespace ShrinkLink.UrlShortener.Service
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ShortenUrl>(builder =>
+            modelBuilder.Entity<ProcessedUrl>(builder =>
             {
                 builder.ToTable ("ShortenUrl");
                 builder.HasKey  (x => x.Id);
@@ -27,7 +27,7 @@ namespace ShrinkLink.UrlShortener.Service
                 builder.Property(x => x.ShortUrl).IsRequired();
                 builder.Property(x => x.CreatedAt).IsRequired();
                 builder.HasMany(S => S.Visitors)
-                    .WithOne(V => V.ShortenUrl)
+                    .WithOne(V => V.ProcessedUrl)
                     .HasForeignKey(V => V.ShortenGuidId);
 
 
@@ -45,7 +45,7 @@ namespace ShrinkLink.UrlShortener.Service
                 builder.Property(x => x.UserAgent);
                 builder.Property(x => x.ClickedAt);
                 builder.Property(x => x.RedirectSuccessful);
-                builder.HasOne(V => V.ShortenUrl)
+                builder.HasOne(V => V.ProcessedUrl)
                     .WithMany(S => S.Visitors)
                     .HasForeignKey(V => V.ShortenGuidId);
 

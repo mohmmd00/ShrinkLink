@@ -17,7 +17,7 @@ namespace ShrinkLink.UrlShortener.Service.Models.Entities
 
 
 
-        public ShortenUrl ShortenUrl { get; set; } //navigation prop    
+        public ProcessedUrl ProcessedUrl { get; set; } //navigation prop    
         public Guid ShortenGuidId { get; set; } //key to navigate
 
         public Visitor(string code, string ipAddress, string country, string operatingSystem, string browser, string deviceType, string userAgent,Guid shortenGuidId)

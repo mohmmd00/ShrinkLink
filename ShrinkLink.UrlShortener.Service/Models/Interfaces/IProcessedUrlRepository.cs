@@ -4,8 +4,8 @@ namespace ShrinkLink.UrlShortener.Service.Models.Interfaces
 {
     public interface IProcessedUrlRepository
     {
-        Task CreateAsync(ProccessedUrl link, CancellationToken ct = default);
+        Task CreateAsync(ProcessedUrl link, CancellationToken ct = default);
         Task<bool> IsCodeExistsAsync(string code, CancellationToken ct = default);
-        Task<ProccessedUrl> FetchWantedUrl(string code, CancellationToken ct = default);
+        Task<ProcessedUrl> FetchWantedUrl(string code, CancellationToken ct = default);
     }
 }

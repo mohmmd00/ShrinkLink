@@ -10,12 +10,12 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
     [ApiController]
     public class ShortenerController : ControllerBase
     {
-        private readonly IShortenUrlRepository _shortenUrlRepository;
+        private readonly IProcessedUrlRepository _processedUrlRepository;
         private readonly IUrlShortenerService _shortenerService;
         private readonly IVisitorRepository _visitorRepository;
-        public ShortenerController(IShortenUrlRepository shortenUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository)
+        public ShortenerController(IProcessedUrlRepository processedUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository)
         {
-            _shortenUrlRepository = shortenUrlRepository;
+            _processedUrlRepository = processedUrlRepository;
             _shortenerService = shortenerService;
             _visitorRepository = visitorRepository;
         }
@@ -26,10 +26,10 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
                 return BadRequest("Invalid URL format.");
 
             var newUniqueCode = await _shortenerService.GenerateUniqueCodeAsync();
-            var shortenedUrl = new ShortenUrl
+            var shortenedUrl = new ProcessedUrl
                 (longUrl.LongLink, newUniqueCode, $"https://{Request.Host}/{newUniqueCode}");
             
-            await _shortenUrlRepository.CreateAsync(shortenedUrl);
+            await _processedUrlRepository.CreateAsync(shortenedUrl);
 
             var obj = new ShortLinkTransferObject{ShortUrl = shortenedUrl.ShortUrl };
             return Ok(obj);
@@ -43,7 +43,7 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
             var parser = Parser.GetDefault();
             ClientInfo clientInfo = parser.Parse(userAgent); //ua parser !!!
 
-            var fetchedOriginalLink = await _shortenUrlRepository.FetchWantedUrl(code);
+            var fetchedOriginalLink = await _processedUrlRepository.FetchWantedUrl(code);
             if (string.IsNullOrEmpty(fetchedOriginalLink.OriginalUrl))
                 return NotFound();
             var visit = new Visitor

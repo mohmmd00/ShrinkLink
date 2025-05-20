@@ -21,13 +21,19 @@ namespace ShrinkLink.Auth.Service.Repositories
 
         public async Task<bool> IsUserExistsByUsername(string username, CancellationToken ct = default)
         {
-            return await _context.Users.AnyAsync(x=>x.Username == username, ct);
+            return await _context.Users.AnyAsync(x => x.Username == username, ct);
         }
 
 
         public async Task<User> FetchUserByUsername(string username, CancellationToken ct = default)
         {
-            var selectedUser = await _context.Users.FirstOrDefaultAsync(x => x.Username == username , ct);
+            var selectedUser = await _context.Users.FirstOrDefaultAsync(x => x.Username == username, ct);
+            return selectedUser;
+        }
+
+        public async Task<User> FetchUserById(string id, CancellationToken ct = default)
+        {
+            var selectedUser = await _context.Users.FirstOrDefaultAsync(x => x.Id.ToString() == id, ct);
             return selectedUser;
         }
     }

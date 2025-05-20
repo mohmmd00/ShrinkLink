@@ -5,6 +5,7 @@ using AuthService.Webapp.Contracts.Dtos;
 using ShrinkLink.Auth.Service.Models.Entities;
 using ShrinkLink.Auth.Service.Models.Interfaces;
 using Microsoft.IdentityModel.Tokens;
+using ShrinkLink.Auth.Service.Models.DataTransferObjects;
 
 namespace ShrinkLink.Auth.Service.Services
 {
@@ -76,10 +77,16 @@ namespace ShrinkLink.Auth.Service.Services
 
         }
 
-        public async Task<User> UserDetails(string id, CancellationToken ct)
+        public async Task<UserBaseInformationTransferObject> UserDetails(string id, CancellationToken ct)
         {
             var fetchedUser = await _userRepository.FetchUserById(id , ct);
-            return fetchedUser;
+
+            var userBaseInfo = new UserBaseInformationTransferObject()
+            {
+                Id = fetchedUser.Id,
+                Username = fetchedUser.Username
+            };
+            return userBaseInfo;
         }
         private string GenerateJwtToken(User user)
         {

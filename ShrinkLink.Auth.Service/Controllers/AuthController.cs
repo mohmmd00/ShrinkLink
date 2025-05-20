@@ -45,16 +45,10 @@ namespace ShrinkLink.Auth.Service.Controllers
         }
 
         [HttpGet("UserBaseDetails/{id}")]
-        public async Task<UserBaseInformationTransferObject> GetUserById(string id, CancellationToken ct = default)
+        public async Task<UserBaseInformationTransferObject> UserBaseDetailsById(string id, CancellationToken ct = default)
         {
-            var fetchedUser = await _authorizationService.UserDetails(id, ct);
-
-            var userBaseInfo = new UserBaseInformationTransferObject()
-            {
-                Id = fetchedUser.Id,
-                Username = fetchedUser.Username
-            };
-            return userBaseInfo;
+            var fetchedUserBasicInformation = await _authorizationService.UserDetails(id, ct);
+            return fetchedUserBasicInformation;
         }
     }
 }

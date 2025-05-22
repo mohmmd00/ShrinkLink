@@ -11,28 +11,44 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
     public class ShortenerController : ControllerBase
     {
         private readonly IProcessedUrlRepository _processedUrlRepository;
-        private readonly IUrlShortenerService _shortenerService;
         private readonly IVisitorRepository _visitorRepository;
-        public ShortenerController(IProcessedUrlRepository processedUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository)
+        private readonly IUrlShortenerService _shortenerService;
+
+
+        private readonly HttpClient _client;
+        public ShortenerController(IProcessedUrlRepository processedUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository, HttpClient client)
         {
             _processedUrlRepository = processedUrlRepository;
             _shortenerService = shortenerService;
             _visitorRepository = visitorRepository;
+            _client = client;
         }
         [HttpPost(Name = "ShortenLink")]
         public async Task<IActionResult> PostLinkAsync(LongLinkTransferObject longUrl)
         {
             if (!Uri.TryCreate(longUrl.LongLink, UriKind.Absolute, out _))
                 return BadRequest("Invalid URL format.");
+            var token = Request.Cookies["jwt-token"];
+
+
+            Console.WriteLine($"the token is : {token}");
 
             var newUniqueCode = await _shortenerService.GenerateUniqueCodeAsync();
-            var shortenedUrl = new ProcessedUrl
-                (longUrl.LongLink, newUniqueCode, $"https://{Request.Host}/{newUniqueCode}");
-            
-            await _processedUrlRepository.CreateAsync(shortenedUrl);
+            var userinfo = await _shortenerService.GetUserBaseInformationAsync(token);
+            if (userinfo != null)
+            {
 
-            var obj = new ShortLinkTransferObject{ShortUrl = shortenedUrl.ShortUrl };
-            return Ok(obj);
+                var shortenedUrl = new ProcessedUrl
+                    (longUrl.LongLink, newUniqueCode, userinfo.Id);
+
+                await _processedUrlRepository.CreateAsync(shortenedUrl);
+
+
+                var obj = new ShortLinkTransferObject { ShortUrl = $"https://{Request.Host}/{newUniqueCode}" };
+                return Ok(obj);
+            }
+
+            return NotFound("user not found");
         }
         [HttpGet("/{code}", Name = "Redirect")]
         public async Task<IActionResult> RedirectToOriginalUrl(string code)
@@ -58,9 +74,9 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
                     ? "Unknown" : clientInfo.Device.Family,
 
                 userAgent: Request.Headers["User-Agent"].ToString(),
-                shortenGuidId:fetchedOriginalLink.Id
+                shortenGuidId: fetchedOriginalLink.Id
                 );
-            _visitorRepository.CreateAsync(visit);
+            await _visitorRepository.CreateAsync(visit);
 
             return Redirect(fetchedOriginalLink.OriginalUrl);
         }

@@ -41,19 +41,19 @@ namespace ShrinkLink.WebApp.Controllers
             }
         }
 
-        public async Task<IActionResult> RegisterPage()
+        public async Task<IActionResult> RegisterPageAsync()
         {
             return View("RegisterPage");
         }
 
-        public async Task<IActionResult> LoginPage()
+        public async Task<IActionResult> LoginPageAsync()
         {
             return View("LoginPage");
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
         {
-            var result = _application.PostRegisterRequest(model.TransferObject);
+            var result =await _application.PostRegisterRequest(model.TransferObject);
             if (result != null)
             {
                 return RedirectToAction("LoginPage");

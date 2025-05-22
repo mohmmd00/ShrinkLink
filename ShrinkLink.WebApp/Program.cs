@@ -14,7 +14,7 @@ namespace ShrinkLink.WebApp
             builder.Services.AddScoped<WebRequestHandler>();
 
 
-            var baseAddress = builder.Configuration["ApiSettings:BaseAddress"];
+            var baseAddress = builder.Configuration["ApiSettings:ShortenerAddress"];
             var authApiAddress = builder.Configuration["ApiSettings:AuthAddress"];
 
 

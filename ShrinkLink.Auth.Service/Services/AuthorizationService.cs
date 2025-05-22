@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AuthService.Webapp.Contracts.Dtos;
@@ -46,9 +47,8 @@ namespace ShrinkLink.Auth.Service.Services
             }
 
             return null;
-
-
         }
+
         public async Task<LoginResponseTransferObject> Login(LoginTransferObject request, CancellationToken ct)
         {
             var fetchedWantedUser = await _userRepository.FetchUserByUsername(request.Username, ct);
@@ -56,7 +56,6 @@ namespace ShrinkLink.Auth.Service.Services
             {
                 if (BCrypt.Net.BCrypt.Verify(request.Password, fetchedWantedUser.PasswordHash))
                 {
-
                     var generatedToken = GenerateJwtToken(fetchedWantedUser);
                     var response = new LoginResponseTransferObject()
                     {
@@ -73,28 +72,50 @@ namespace ShrinkLink.Auth.Service.Services
             }
 
             return null;
-
-
         }
 
-        public async Task<UserBaseInformationTransferObject> UserDetails(string id, CancellationToken ct)
+        public async Task<UserBaseInformationTransferObject> UserBasicDetails(string jwtToken, CancellationToken ct)
         {
-            var fetchedUser = await _userRepository.FetchUserById(id , ct);
-
-            var userBaseInfo = new UserBaseInformationTransferObject()
+            try
             {
-                Id = fetchedUser.Id,
-                Username = fetchedUser.Username
-            };
-            return userBaseInfo;
+                
+                var userId = ParseJwtToken(jwtToken);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return null; 
+                }
+
+                
+                var fetchedUser = await _userRepository.FetchUserById(userId, ct);
+                if (fetchedUser == null)
+                {
+                    return null; 
+                }
+
+                var userBaseInfo = new UserBaseInformationTransferObject()
+                {
+                    Id = fetchedUser.Id,
+                    Username = fetchedUser.Username
+                };
+                return userBaseInfo;
+            }
+            catch (SecurityTokenException)
+            {
+                return null; 
+            }
+            catch (Exception)
+            {
+                return null;  
+            }
         }
+
         private string GenerateJwtToken(User user)
         {
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Role,user.RoleId.ToString())
+                new Claim(ClaimTypes.Role, user.RoleId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -109,8 +130,39 @@ namespace ShrinkLink.Auth.Service.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private string ParseJwtToken(string jwtToken)
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["Jwt:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                var principal = handler.ValidateToken(jwtToken, validationParameters, out var validatedToken);
+
+                var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                return userId;
+            }
+            catch (SecurityTokenException)
+            {
+                return null; 
+            }
+            catch (Exception)
+            {
+                return null; 
+            }
+        }
     }
-
-
 }
-

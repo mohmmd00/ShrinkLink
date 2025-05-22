@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Shared.Contracts\UrlShortener.Webapp.Contracts.csproj" />
+    <ProjectReference Include="..\AuthService.UrlShortener.Contracts\AuthService.UrlShortener.Contracts.csproj" />
     <ProjectReference Include="..\UrlShortener.Webapp.Contracts\UrlShortener.Webapp.Contracts.csproj" />
   </ItemGroup>
 

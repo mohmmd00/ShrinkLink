@@ -15,6 +15,19 @@ namespace ShrinkLink.UrlShortener.Service
 
             // Add services to the container.
 
+
+            var authAddress = builder.Configuration["ApiSettings:AuthAddress"];
+            if (string.IsNullOrEmpty(authAddress))
+            {
+                throw new InvalidOperationException("AuthAddress is not configured.");
+            }
+            builder.Services.AddHttpClient<UrlShortenerService>("Auth", Client =>
+            {
+                Client.BaseAddress = new Uri(authAddress);
+            });
+
+
+
             var connectionString = builder.Configuration.GetConnectionString("Cn1");
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -22,6 +35,11 @@ namespace ShrinkLink.UrlShortener.Service
             }
             builder.Services.AddDbContext<UrlShortenerDbContext>(x =>
                 x.UseSqlServer(connectionString));
+
+
+
+
+
 
 
             builder.Services.AddScoped<IProcessedUrlRepository, ProcessedUrlRepository>();

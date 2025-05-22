@@ -31,16 +31,26 @@ namespace ShrinkLink.Auth.Service.Services
                 var salt = BCrypt.Net.BCrypt.GenerateSalt();
                 if (salt != null)
                 {
-                    var newUser = new User()
-                    {
-                        Id = new Guid(),
-                        Username = request.Username,
-                        CreatedAt = DateTime.Now,
-                        Email = request.Email, // must impl verifing email 
-                        PasswordSalt = salt,
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt),
-                        RoleId = _roleRepository.FetchRolesIdAsync("User").Result,
-                    };
+                    //var new12ser = new User()
+                    //{
+                    //    Id = new Guid(),
+                    //    Username = request.Username,
+                    //    CreatedAt = DateTime.Now,
+                    //    Email = request.Email, // must impl verifing email 
+                    //    PasswordSalt = salt,
+                    //    PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password, salt),
+                    //    RoleId = _roleRepository.FetchRolesIdAsync("User").Result,
+                    //};
+
+                    var newUser = new User
+                        (
+                            username:request.Username,
+                            email:request.Email,
+                            passwordSalt:salt,
+                            passwordHash: BCrypt.Net.BCrypt.HashPassword(request.Password, salt),
+                            roleId: _roleRepository.FetchRolesIdAsync("User").Result
+
+                        );
                     await _userRepository.CreateAsync(newUser, ct);
                     return new RegisterResponseTransferObject() { Message = "register was successful" };
                 }

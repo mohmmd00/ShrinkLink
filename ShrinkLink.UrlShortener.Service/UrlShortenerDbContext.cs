@@ -44,7 +44,7 @@ namespace ShrinkLink.UrlShortener.Service
                 builder.HasKey  (x => x.PrimaryId);
 
 
-                builder.Property(x => x.Code).IsRequired();
+                builder.Property(x => x.ProcessedUrlCode).IsRequired();
                 builder.Property(x => x.IpAddress).IsRequired();
                 builder.Property(x => x.Country);
                 builder.Property(x => x.OperatingSystem);
@@ -52,7 +52,6 @@ namespace ShrinkLink.UrlShortener.Service
                 builder.Property(x => x.DeviceType);
                 builder.Property(x => x.UserAgent);
                 builder.Property(x => x.ClickedAt);
-                builder.Property(x => x.RedirectSuccessful);
 
 
                 builder.HasOne(V => V.ProcessedUrl)

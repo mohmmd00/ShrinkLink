@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyCSharp.HttpUserAgentParser;
+using MyCSharp.HttpUserAgentParser.Providers;
 using ShrinkLink.UrlShortener.Service.Models.Entities;
 using ShrinkLink.UrlShortener.Service.Models.Interfaces;
-using UAParser;
 using UrlShortener.Webapp.Contracts.Dtos;
 
 namespace ShrinkLink.UrlShortener.Service.Controllers
@@ -10,17 +11,21 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
     [ApiController]
     public class ShortenerController : ControllerBase
     {
+
+        private readonly HttpClient _client;
+
+        private readonly IHttpUserAgentParserProvider _httpUserAgentParser;
+
         private readonly IProcessedUrlRepository _processedUrlRepository;
         private readonly IVisitorRepository _visitorRepository;
         private readonly IUrlShortenerService _shortenerService;
 
-
-        private readonly HttpClient _client;
-        public ShortenerController(IProcessedUrlRepository processedUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository, HttpClient client)
+        public ShortenerController(IProcessedUrlRepository processedUrlRepository, IUrlShortenerService shortenerService, IVisitorRepository visitorRepository, HttpClient client , IHttpUserAgentParserProvider httpUserAgentParser)
         {
             _processedUrlRepository = processedUrlRepository;
             _shortenerService = shortenerService;
             _visitorRepository = visitorRepository;
+            _httpUserAgentParser = httpUserAgentParser;
             _client = client;
         }
         [HttpPost(Name = "ShortenLink")]
@@ -53,32 +58,33 @@ namespace ShrinkLink.UrlShortener.Service.Controllers
         [HttpGet("/{code}", Name = "Redirect")]
         public async Task<IActionResult> RedirectToOriginalUrl(string code)
         {
-
-            var userIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var userAgent = Request.Headers["User-Agent"];
-            var parser = Parser.GetDefault();
-            ClientInfo clientInfo = parser.Parse(userAgent); //ua parser !!!
-
             var fetchedOriginalLink = await _processedUrlRepository.FetchWantedUrl(code);
-            if (string.IsNullOrEmpty(fetchedOriginalLink.OriginalUrl))
-                return NotFound();
-            var visit = new Visitor
+
+            if (!string.IsNullOrEmpty(fetchedOriginalLink.OriginalUrl))
+            {
+                var userIpAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                var userAgentInformation = _httpUserAgentParser.Parse(Request.Headers["User-Agent"]);
+
+                string deviceType = userAgentInformation.IsMobile() ? "Mobile" : "Desktop";
+
+                var newVisit = new Visitor
                 (
-                code: code,
-                ipAddress: userIpAddress,
-                country: "iran", //must add in future
-                operatingSystem: $"{clientInfo.OS.Family} {clientInfo.OS.Major}",
-                browser: $"{clientInfo.UA.Family} {clientInfo.UA.Major}",
-
-                deviceType: string.IsNullOrEmpty(clientInfo.Device.Family) || clientInfo.Device.Family == "Other"
-                    ? "Unknown" : clientInfo.Device.Family,
-
-                userAgent: Request.Headers["User-Agent"].ToString(),
-                shortenGuidId: fetchedOriginalLink.Id
+                    processedUrlCode: code,
+                    ipAddress: userIpAddress,
+                    country: "Iran",
+                    operatingSystem: userAgentInformation.Platform.Value.Name,
+                    browser: userAgentInformation.Name,
+                    deviceType: deviceType,
+                    userAgent: userAgentInformation.UserAgent,
+                    shortenGuidId: fetchedOriginalLink.Id
                 );
-            await _visitorRepository.CreateAsync(visit);
+                await _visitorRepository.CreateAsync(newVisit);
+                return Redirect(fetchedOriginalLink.OriginalUrl);
+            }
 
-            return Redirect(fetchedOriginalLink.OriginalUrl);
+            return NotFound();
+
+
         }
 
 

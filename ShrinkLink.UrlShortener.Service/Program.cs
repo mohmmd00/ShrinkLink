@@ -1,6 +1,7 @@
 
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
+using MyCSharp.HttpUserAgentParser.DependencyInjection;
 using ShrinkLink.UrlShortener.Service.Models.Interfaces;
 using ShrinkLink.UrlShortener.Service.Repositories;
 using ShrinkLink.UrlShortener.Service.Services;
@@ -39,7 +40,7 @@ namespace ShrinkLink.UrlShortener.Service
 
 
 
-
+            builder.Services.AddHttpUserAgentParser();
 
 
             builder.Services.AddScoped<IProcessedUrlRepository, ProcessedUrlRepository>();

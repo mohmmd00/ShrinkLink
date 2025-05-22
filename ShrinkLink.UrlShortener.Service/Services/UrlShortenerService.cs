@@ -47,21 +47,9 @@ namespace ShrinkLink.UrlShortener.Service.Services
         public async Task<UserBasicInformation> GetUserBaseInformationAsync(string token, CancellationToken ct = default)
         {
             //var response = await _httpClient.PostAsJsonAsync("api/Auth/UserBaseDetails", token);
-            var response2 = await _httpClient.GetFromJsonAsync<UserBasicInformation>($"https://localhost:7030/api/Auth/UserBaseDetails/{token}");
-
-
-            //if (response2 == null)
-            //{
-            //    var errorMessage = await response2.Content.ReadAsStringAsync();
-            //    // You can log this or throw an exception, depending on your needs
-            //    Console.WriteLine("API error: " + errorMessage);
-            //    return null;
-            //}
-
-            //var responseModel = await response.Content.ReadFromJsonAsync<UserBasicInformation>(new JsonSerializerOptions
-            //{ PropertyNameCaseInsensitive = true });
-
-            return response2;
+            var response = await _httpClient.GetFromJsonAsync<UserBasicInformation>
+                ($"https://localhost:7030/api/Auth/UserBaseDetails/{token}");
+            return response;
 
         }
 

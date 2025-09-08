@@ -1,276 +1,170 @@
 ﻿@{
     Layout = "_DashboardLayout";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="col-lg-8">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title d-flex align-items-center gap-2 mb-4">
-                Traffic Overview
-                <span>
-                    <iconify-icon icon="solar:question-circle-bold" class="fs-7 d-flex text-muted" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-success" data-bs-title="Traffic Overview"></iconify-icon>
-                </span>
-            </h5>
-            <div id="traffic-overview">
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-lg-4">
-    <div class="card">
-        <div class="card-body text-center">
-            <img src="../assets/images/backgrounds/product-tip.png" alt="image" class="img-fluid" width="205">
-            <h4 class="mt-7">Productivity Tips!</h4>
-            <p class="card-subtitle mt-2 mb-3">
-                Duis at orci justo nulla in libero id leo
-                molestie sodales phasellus justo.
-            </p>
-            <button class="btn btn-primary mb-3">View All Tips</button>
-        </div>
-    </div>
-</div>
-<div class="col-lg-8">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">View by page title and screen class</h5>
-            <div class="table-responsive">
-                <table class="table text-nowrap align-middle mb-0">
-                    <thead>
-                        <tr class="border-2 border-bottom border-primary border-0">
-                            <th scope="col" class="ps-0">Page Title</th>
-                            <th scope="col">Link</th>
-                            <th scope="col" class="text-center">Pageviews</th>
-                            <th scope="col" class="text-center">Page Value</th>
-                        </tr>
-                    </thead>
-                    <tbody class="table-group-divider">
-                        <tr>
-                            <th scope="row" class="ps-0 fw-medium">
-                                <span class="table-link1 text-truncate d-block">
-                                    Welcome to our
-                                    website
-                                </span>
-                            </th>
-                            <td>
-                                <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">/index.html</a>
-                            </td>
-                            <td class="text-center fw-medium">18,456</td>
-                            <td class="text-center fw-medium">$2.40</td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="ps-0 fw-medium">
-                                <span class="table-link1 text-truncate d-block">
-                                    Modern Admin
-                                    Dashboard Template
-                                </span>
-                            </th>
-                            <td>
-                                <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">/dashboard</a>
-                            </td>
-                            <td class="text-center fw-medium">17,452</td>
-                            <td class="text-center fw-medium">$0.97</td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="ps-0 fw-medium">
-                                <span class="table-link1 text-truncate d-block">
-                                    Explore our
-                                    product catalog
-                                </span>
-                            </th>
-                            <td>
-                                <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">/product-checkout</a>
-                            </td>
-                            <td class="text-center fw-medium">12,180</td>
-                            <td class="text-center fw-medium">$7,50</td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="ps-0 fw-medium">
-                                <span class="table-link1 text-truncate d-block">
-                                    Comprehensive
-                                    User Guide
-                                </span>
-                            </th>
-                            <td>
-                                <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">/docs</a>
-                            </td>
-                            <td class="text-center fw-medium">800</td>
-                            <td class="text-center fw-medium">$5,50</td>
-                        </tr>
-                        <tr>
-                            <th scope="row" class="ps-0 fw-medium border-0">
-                                <span class="table-link1 text-truncate d-block">
-                                    Check out our
-                                    services
-                                </span>
-                            </th>
-                            <td class="border-0">
-                                <a href="javascript:void(0)" class="link-primary text-dark fw-medium d-block">/services</a>
-                            </td>
-                            <td class="text-center fw-medium border-0">1300</td>
-                            <td class="text-center fw-medium border-0">$2,15</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-lg-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title d-flex align-items-center gap-2 mb-5 pb-3">
-                Sessions by
-                device<span><iconify-icon icon="solar:question-circle-bold" class="fs-7 d-flex text-muted" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="tooltip-success" data-bs-title="Locations"></iconify-icon></span>
-            </h5>
-            <div class="row">
-                <div class="col-4">
-                    <iconify-icon icon="solar:laptop-minimalistic-line-duotone" class="fs-7 d-flex text-primary"></iconify-icon>
-                    <span class="fs-11 mt-2 d-block text-nowrap">Computers</span>
-                    <h4 class="mb-0 mt-1">87%</h4>
-                </div>
-                <div class="col-4">
-                    <iconify-icon icon="solar:smartphone-line-duotone" class="fs-7 d-flex text-secondary"></iconify-icon>
-                    <span class="fs-11 mt-2 d-block text-nowrap">Smartphone</span>
-                    <h4 class="mb-0 mt-1">9.2%</h4>
-                </div>
-                <div class="col-4">
-                    <iconify-icon icon="solar:tablet-line-duotone" class="fs-7 d-flex text-success"></iconify-icon>
-                    <span class="fs-11 mt-2 d-block text-nowrap">Tablets</span>
-                    <h4 class="mb-0 mt-1">3.1%</h4>
-                </div>
-            </div>
+<div class="row g-4">
+    <!-- Main Feature Card -->
+    <div class="col-lg-12 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 p-md-5">
+                <h1 class="display-5 fw-bold mb-4">
+                    Transform Links into <span class="text-primary">Growth Engines</span>
+                </h1>
 
-            <div class="vstack gap-4 mt-7 pt-2">
-                <div>
-                    <div class="hstack justify-content-between">
-                        <span class="fs-3 fw-medium">Computers</span>
-                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">87%</h6>
+                <p class="lead text-muted mb-5">
+                    ShrinkLink turns messy URLs into clean, trackable links that look professional and drive 34% more clicks. Trusted by 15,000+ marketers worldwide.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light rounded-3 h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3 d-inline-flex" style="width: 80px; height: 80px;">
+                                    <iconify-icon icon="solar:rocket-linear" class="fs-8 text-primary mx-auto my-auto"></iconify-icon>
+                                </div>
+                                <h4 class="fw-bold mb-2">Boost Engagement</h4>
+                                <p class="text-muted mb-0">Clean links get 34% more clicks and improve brand perception</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="progress mt-6" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar bg-primary" style="width: 100%"></div>
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light rounded-3 h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3 d-inline-flex" style="width: 80px; height: 80px;">
+                                    <iconify-icon icon="solar:graph-up-bold" class="fs-8 text-primary mx-auto my-auto"></iconify-icon>
+                                </div>
+                                <h4 class="fw-bold mb-2">Real-time Analytics</h4>
+                                <p class="text-muted mb-0">Track clicks, locations, devices, and campaign performance</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0 bg-light rounded-3 h-100 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3 mx-auto mb-3 d-inline-flex" style="width: 80px; height: 80px;">
+                                    <iconify-icon icon="solar:shield-check-bold" class="fs-8 text-primary mx-auto my-auto"></iconify-icon>
+                                </div>
+                                <h4 class="fw-bold mb-2">Enterprise Security</h4>
+                                <p class="text-muted mb-0">SSL encryption, malware scanning, and link expiration</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div>
-                    <div class="hstack justify-content-between">
-                        <span class="fs-3 fw-medium">Smartphones</span>
-                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">9.2%</h6>
+                <div class="mt-5 pt-4 border-top border-light">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <span class="badge bg-light text-dark py-2 px-3">
+                            <iconify-icon icon="solar:verified-check-bold" class="me-1"></iconify-icon>
+                            98.7% Uptime Guarantee
+                        </span>
+                        <span class="badge bg-light text-dark py-2 px-3">
+                            <iconify-icon icon="solar:support-bold" class="me-1"></iconify-icon>
+                            24/7 Support
+                        </span>
+                        <span class="badge bg-light text-dark py-2 px-3">
+                            <iconify-icon icon="solar:document-bold" class="me-1"></iconify-icon>
+                            GDPR Compliant
+                        </span>
                     </div>
-                    <div class="progress mt-6" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar bg-secondary" style="width: 50%"></div>
-                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- کارت حرفه‌ای با استفاده انحصاری از کلاس‌های Bootstrap -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body p-4 p-md-5 d-flex flex-column">
+                <div class="mb-4">
+                    <h2 class="fw-bold display-6 mb-2">Start Growing Today</h2>
+                    <p class="text-muted mb-0">
+                        Transform your links in seconds and unlock powerful analytics
+                    </p>
                 </div>
 
-                <div>
-                    <div class="hstack justify-content-between">
-                        <span class="fs-3 fw-medium">Tablets</span>
-                        <h6 class="fs-3 fw-medium text-dark lh-base mb-0">3.1%</h6>
-                    </div>
-                    <div class="progress mt-6" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                        <div class="progress-bar bg-success" style="width: 35%"></div>
-                    </div>
+                <div class="d-grid gap-3 flex-grow-1">
+                    <a asp-controller="Dashboard" asp-action="Links"
+                       class="btn btn-primary btn-lg py-3 fw-bold d-flex align-items-center justify-content-center position-relative">
+                        <span>Create Short Link</span>
+                        <iconify-icon icon="solar:link-bold" class="ms-2 fs-5"></iconify-icon>
+                    </a>
+
+                    <a asp-controller="Dashboard" asp-action="Analyze"
+                       class="btn btn-outline-primary btn-lg py-3 fw-bold d-flex align-items-center justify-content-center border-2">
+                        <span>Analyze Links</span>
+                        <iconify-icon icon="solar:chart-2-bold" class="ms-2 fs-5"></iconify-icon>
+                    </a>
                 </div>
 
+                <div class="mt-4 pt-3 border-top border-light">
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <div class="d-flex align-items-center text-muted">
+                            <iconify-icon icon="solar:verified-check-bold" class="me-2 fs-5 text-primary"></iconify-icon>
+                            <small>Free forever</small>
+                        </div>
+                        <div class="d-flex align-items-center text-muted">
+                            <iconify-icon icon="solar:credit-card-bold" class="me-2 fs-5 text-primary"></iconify-icon>
+                            <small>No credit card required</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ستون راست: بهینه‌سازی شده -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <h2 class="h4 fw-bold mb-0">Popular Use Cases</h2>
+                </div>
+
+                <!-- Social Media Section -->
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <iconify-icon icon="solar:hashtag-linear" class="me-2 fs-5 text-primary"></iconify-icon>
+                        Social Media Links
+                    </h3>
+                    <p class="text-muted mb-0">
+                        Shorten links for Twitter, Instagram, and Facebook to save character space and track engagement.
+                    </p>
+                </div>
+
+                <!-- Email Marketing Section -->
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <iconify-icon icon="solar:letter-bold" class="me-2 fs-5 text-success"></iconify-icon>
+                        Email Campaigns
+                    </h3>
+                    <p class="text-muted mb-0">
+                        Create trackable links in your newsletters to see which content resonates with your audience.
+                    </p>
+                </div>
+
+                <!-- Enterprise Security Section -->
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <iconify-icon icon="solar:shield-check-bold" class="me-2 fs-5 text-success"></iconify-icon>
+                        Enterprise Security
+                    </h3>
+                    <p class="text-muted mb-0">
+                        SSL encryption, malware scanning, and link expiration.
+                    </p>
+                </div>
+
+                <!-- Global Performance Section -->
+                <div class="mb-0">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <iconify-icon icon="solar:globe-linear" class="me-2 fs-5 text-primary"></iconify-icon>
+                        Global Performance
+                    </h3>
+                    <p class="text-muted mb-0">
+                        Our globally distributed infrastructure ensures your shortened links resolve quickly from anywhere in the world.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 </div>
-@* <div class="col-lg-4">
-    <div class="card overflow-hidden hover-img">
-        <div class="position-relative">
-            <a href="javascript:void(0)">
-                <img src="../assets/images/blog/blog-img1.jpg" class="card-img-top" alt="matdash-img">
-            </a>
-            <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0">
-                2
-                min Read
-            </span>
-            <img src="../assets/images/profile/user-3.jpg" alt="matdash-img" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Georgeanna Ramero">
-        </div>
-        <div class="card-body p-4">
-            <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm  mt-3">Social</span>
-            <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">
-                As yen tumbles, gadget-loving
-                Japan goes
-                for secondhand iPhones
-            </a>
-            <div class="d-flex align-items-center gap-4">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-eye text-dark fs-5"></i>9,125
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-message-2 text-dark fs-5"></i>3
-                </div>
-                <div class="d-flex align-items-center fs-2 ms-auto">
-                    <i class="ti ti-point text-dark"></i>Mon, Dec 19
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-lg-4">
-    <div class="card overflow-hidden hover-img">
-        <div class="position-relative">
-            <a href="javascript:void(0)">
-                <img src="../assets/images/blog/blog-img2.jpg" class="card-img-top" alt="matdash-img">
-            </a>
-            <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0">
-                2
-                min Read
-            </span>
-            <img src="../assets/images/profile/user-2.jpg" alt="matdash-img" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Georgeanna Ramero">
-        </div>
-        <div class="card-body p-4">
-            <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm  mt-3">Gadget</span>
-            <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">
-                Intel loses bid to revive
-                antitrust case
-                against patent foe Fortress
-            </a>
-            <div class="d-flex align-items-center gap-4">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-eye text-dark fs-5"></i>4,150
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-message-2 text-dark fs-5"></i>38
-                </div>
-                <div class="d-flex align-items-center fs-2 ms-auto">
-                    <i class="ti ti-point text-dark"></i>Sun, Dec 18
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-lg-4">
-    <div class="card overflow-hidden hover-img">
-        <div class="position-relative">
-            <a href="javascript:void(0)">
-                <img src="../assets/images/blog/blog-img3.jpg" class="card-img-top" alt="matdash-img">
-            </a>
-            <span class="badge text-bg-light text-dark fs-2 lh-sm mb-9 me-9 py-1 px-2 fw-semibold position-absolute bottom-0 end-0">
-                2
-                min Read
-            </span>
-            <img src="../assets/images/profile/user-3.jpg" alt="matdash-img" class="img-fluid rounded-circle position-absolute bottom-0 start-0 mb-n9 ms-9" width="40" height="40" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Georgeanna Ramero">
-        </div>
-        <div class="card-body p-4">
-            <span class="badge text-bg-light fs-2 py-1 px-2 lh-sm  mt-3">Health</span>
-            <a class="d-block my-4 fs-5 text-dark fw-semibold link-primary" href="">
-                COVID outbreak deepens as more
-                lockdowns
-                loom in China
-            </a>
-            <div class="d-flex align-items-center gap-4">
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-eye text-dark fs-5"></i>9,480
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <i class="ti ti-message-2 text-dark fs-5"></i>12
-                </div>
-                <div class="d-flex align-items-center fs-2 ms-auto">
-                    <i class="ti ti-point text-dark"></i>Sat, Dec 17
-                </div>
-            </div>
-        </div>
-    </div>
-</div> *@

@@ -7,12 +7,12 @@ namespace ShrinkLink.WebApp.attribute
     {
         public Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
-            var token = context.HttpContext.Request.Cookies["jwt-token"];
+            var token = context.HttpContext.Request.Cookies["Authorization"];
             if (string.IsNullOrEmpty(token))
             {
                 context.Result = new RedirectToRouteResult(new RouteValueDictionary()
                 {
-                    { "Controller", "Home" },
+                    { "Controller", "Account" },
                     { "Action", "LoginPage" }
                 });
             }

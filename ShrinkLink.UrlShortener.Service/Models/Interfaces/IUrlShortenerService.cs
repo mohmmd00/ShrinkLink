@@ -1,11 +1,17 @@
-﻿using AuthService.UrlShortener.Contracts.Dtos;
-using ShrinkLink.UrlShortener.Service.Models.Entities;
+﻿using ShrinkLink.Contracts.DataTransferObjects.LinkShortenerService;
 
 namespace ShrinkLink.UrlShortener.Service.Models.Interfaces
 {
     public interface IUrlShortenerService
     {
-        Task<string> GenerateUniqueCodeAsync(CancellationToken ct = default);
-        Task<UserBasicInformation> GetUserBaseInformationAsync(string asndca, CancellationToken ct = default);
+        Task<LinkShortenerResponseTransferObject> GenerateShortLink(LinkShortenerRequestTransferObject request, Guid userPrimaryId, CancellationToken ct = default);
+
+        Task<AllLinksFetcherResponseTransferObject> FetchAllProcessedLinks(Guid userPrimaryId, CancellationToken ct = default);
+
+        Task<LinkRemoverResponseTransferObject> RemoveSelectedLink(Guid userPrimaryId, string shortenedLinkCode,
+            CancellationToken ct = default);
+
+        Task<LinkCheckerResponseTransferObject> CheckSelectedLink(Guid userPrimaryId, string code,
+            CancellationToken ct = default);
     }
 }

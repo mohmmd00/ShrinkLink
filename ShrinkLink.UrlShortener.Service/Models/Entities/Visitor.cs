@@ -8,6 +8,7 @@ namespace ShrinkLink.UrlShortener.Service.Models.Entities
         public string ProcessedUrlCode { get;private set; }
         public string IpAddress { get;private set; }
         public string Country { get;private set; }
+        public string City { get; set; }
         public string OperatingSystem { get;private set; }
         public string Browser { get;private set; }
         public string DeviceType { get;private set; }
@@ -18,7 +19,7 @@ namespace ShrinkLink.UrlShortener.Service.Models.Entities
         public ProcessedUrl ProcessedUrl { get; set; } //navigation prop    
         public Guid ShortenGuidId { get; set; } //key to navigate
 
-        public Visitor(string processedUrlCode, string ipAddress, string country, string operatingSystem, string browser, string deviceType, string userAgent,Guid shortenGuidId)
+        public Visitor(string processedUrlCode, string ipAddress, string country, string operatingSystem, string browser, string deviceType, string userAgent,Guid shortenGuidId, string city)
         {
             PrimaryId = Guid.NewGuid();
             ProcessedUrlCode = processedUrlCode;
@@ -30,6 +31,7 @@ namespace ShrinkLink.UrlShortener.Service.Models.Entities
             UserAgent = userAgent;
             ClickedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             ShortenGuidId = shortenGuidId;
+            City = city;
         }
     }
 }

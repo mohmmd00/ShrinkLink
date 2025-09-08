@@ -24,6 +24,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthService.Webapp.Contracts\AuthService.Webapp.Contracts.csproj" />
+    <ProjectReference Include="..\ShrinkLink.Contracts\ShrinkLink.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\DataTransferObjects\" />
   </ItemGroup>
 
 </Project>

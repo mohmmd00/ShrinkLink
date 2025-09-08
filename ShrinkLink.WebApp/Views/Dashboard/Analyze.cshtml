@@ -1,0 +1,967 @@
+﻿@using ShrinkLink.Contracts.DataTransferObjects.AnalyzeService
+@model ShrinkLink.WebApp.Models.DashBoardBindingModels.AnalyzeModel
+@{
+    Layout = "_DashboardLayout";
+
+    ViewData["Title"] = "Analytics Dashboard";
+}
+<!-- Summary Section - Always Display -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            @if (TempData["AnalysisVisitsErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show m-3 mb-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="ti ti-alert-circle me-2 fs-4"></i>
+                        <div>
+                            <h5 class="alert-heading mb-1">Analysis Error</h5>
+                            <p class="mb-0">@TempData["AnalysisVisitsErrorMessage"]</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            <div class="card-body">
+                <header class="mb-4 text-center">
+                    <h1 class="h3 fw-bold mb-2 d-flex justify-content-center align-items-center gap-2">
+                        <i class="ti ti-chart-bar fs-3 text-primary"></i>
+                        Analytics Summary
+                    </h1>
+                    <p class="text-muted mb-0">Track performance of your shortened links</p>
+                </header>
+                <div class="row g-3">
+                    @{
+                        // Default empty state
+
+                        var summaryItems = new[] {
+                    new {
+                    Label = "Total Visits",
+                    Value = "0",
+                    Icon = "ti-users",
+                    Description = "Total number of visits to your links"
+                    },
+                    new {
+                    Label = "Unique Countries",
+                    Value = "0",
+                    Icon = "ti-world",
+                    Description = "Countries where your links were accessed"
+                    },
+                    new {
+                    Label = "Unique Cities",
+                    Value = "0",
+                    Icon = "ti-building",
+                    Description = "Cities where your links were accessed"
+                    },
+                    new {
+                    Label = "Peak Hour",
+                    Value = "-",
+                    Icon = "ti-clock",
+                    Description = "Hour with highest traffic"
+                    },
+                    new {
+                    Label = "Avg Visits/Hour",
+                    Value = "0.00",
+                    Icon = "ti-chart-line",
+                    Description = "Average visits per hour"
+                    }
+                    };
+
+                        // Replace with actual data if available
+
+                        if (Model?.AnalyzeViewModel != null &&
+
+                        Model.AnalyzeViewModel.Status == VisitAnalysisReportStatus.Success &&
+
+                        Model.AnalyzeViewModel.AnalysisData != null)
+
+                        {
+
+                            var data = Model.AnalyzeViewModel.AnalysisData;
+
+                            summaryItems = new[] {
+                    new {
+                    Label = "Total Visits",
+                    Value = data.TotalVisits.ToString("N0"),
+                    Icon = "ti-users",
+                    Description = "Total number of visits to your links"
+                    },
+                    new {
+                    Label = "Unique Countries",
+                    Value = data.UniqueCountries.ToString(),
+                    Icon = "ti-world",
+                    Description = "Countries where your links were accessed"
+                    },
+                    new {
+                    Label = "Unique Cities",
+                    Value = data.UniqueCities.ToString(),
+                    Icon = "ti-building",
+                    Description = "Cities where your links were accessed"
+                    },
+                    new {
+                    Label = "Peak Hour",
+                    Value = data.PeakHour,
+                    Icon = "ti-clock",
+                    Description = "Hour with highest traffic"
+                    },
+                    new {
+                    Label = "Avg Visits/Hour",
+                    Value = data.AverageVisitsPerHour.ToString("F2"),
+                    Icon = "ti-chart-line",
+                    Description = "Average visits per hour"
+                    }
+                    };
+
+                        }
+                    }
+                    @foreach (var item in summaryItems)
+
+                    {
+                        <div class="col-6 col-md-4 col-lg-2" title="@item.Description">
+                            <div class="card h-100 border-0 bg-light bg-opacity-10 shadow-sm rounded-3">
+                                <div class="card-body p-3">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="@item.Icon text-primary fs-4 me-2"></i>
+                                        <h6 class="text-muted mb-0 fw-normal">@item.Label</h6>
+                                    </div>
+                                    <h3 class="fw-bold mb-0 text-truncate" style="max-width: 100px;">@item.Value</h3>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Charts Section -->
+@if (Model?.AnalyzeViewModel != null && Model.AnalyzeViewModel.Status == VisitAnalysisReportStatus.Success)
+
+{
+    <section aria-labelledby="charts-heading" class="mb-5">
+        <h2 id="charts-heading" class="visually-hidden">Analytics Visualizations</h2>
+        <div class="row g-4 mb-4">
+            <!-- Visits by Hour -->
+            <div class="col-12 col-xl-8">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-clock me-2 text-primary"></i>
+                                Traffic Distribution by Hour
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-chart-bar me-1"></i> Bar Chart
+                            </span>
+                        </div>
+                        <div id="bar-chart" class="chart-container position-relative" style="min-height: 300px;"
+                             role="region" aria-label="Hourly traffic distribution chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading traffic data</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading traffic data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Hourly traffic distribution data</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Hour</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Top Countries -->
+            <div class="col-12 col-xl-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-world me-2 text-primary"></i>
+                                Top Countries
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-pie-chart me-1"></i> Pie Chart
+                            </span>
+                        </div>
+                        <div id="country-chart" class="chart-container position-relative" style="min-height: 300px;"
+                             role="region" aria-label="Top countries chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading country data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Top countries traffic data</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Secondary Charts -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-building me-2 text-primary"></i>
+                                Top Cities
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-pie-chart me-1"></i> Pie Chart
+                            </span>
+                        </div>
+                        <div id="city-chart" class="chart-container position-relative" style="min-height: 250px;"
+                             role="region" aria-label="Top cities chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading city data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Top cities traffic data</caption>
+                                <thead>
+                                    <tr>
+                                        <th>City</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-device-laptop me-2 text-primary"></i>
+                                Device Types
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-pie-chart me-1"></i> Pie Chart
+                            </span>
+                        </div>
+                        <div id="device-chart" class="chart-container position-relative" style="min-height: 250px;"
+                             role="region" aria-label="Device types chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading device data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Device types traffic data</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Device Type</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-percentage me-2 text-primary"></i>
+                                Country Distribution
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-pie-chart me-1"></i> Pie Chart
+                            </span>
+                        </div>
+                        <div id="country-percent-chart" class="chart-container position-relative" style="min-height: 250px;"
+                             role="region" aria-label="Country distribution chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading country distribution</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Country distribution percentages</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>Percentage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Browsers & OS Charts -->
+        <div class="row g-4">
+            <div class="col-12 col-xl-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-browser me-2 text-primary"></i>
+                                Browser Usage
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-chart-bar me-1"></i> Bar Chart
+                            </span>
+                        </div>
+                        <div id="browser-chart" class="chart-container position-relative" style="min-height: 300px;"
+                             role="region" aria-label="Browser usage chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading browser data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Browser usage statistics</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Browser</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-6">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="h5 card-title fw-bold mb-0 d-flex align-items-center">
+                                <i class="ti ti-brand-windows me-2 text-primary"></i>
+                                Operating Systems
+                            </h3>
+                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                                <i class="ti ti-chart-bar me-1"></i> Bar Chart
+                            </span>
+                        </div>
+                        <div id="os-chart" class="chart-container position-relative" style="min-height: 300px;"
+                             role="region" aria-label="Operating systems chart" aria-live="polite" aria-busy="true">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100 position-absolute top-0 start-0">
+                                <div class="text-center" aria-hidden="true">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Loading chart...</span>
+                                    </div>
+                                    <p class="text-muted mb-0">Loading OS data</p>
+                                </div>
+                            </div>
+                            <table class="visually-hidden">
+                                <caption>Operating systems usage statistics</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Operating System</th>
+                                        <th>Visits</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+else
+
+{
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5 text-center">
+                    @if (Model?.AnalyzeViewModel?.Status == VisitAnalysisReportStatus.VisitorNotFound)
+                    {
+                        <div class="mb-4">
+                            <div class="d-inline-block p-3 bg-primary bg-opacity-10 rounded-circle">
+                                <i class="ti ti-chart-bar fs-1 text-primary"></i>
+                            </div>
+                        </div>
+                        <h2 class="h4 fw-bold mb-3">No Analytics Data Available</h2>
+                        <p class="text-muted mb-4">
+                            There are no visits recorded for this shortened link yet.
+                        </p>
+                        <div class="bg-light p-3 rounded-3 mb-4 text-start">
+                            <h3 class="h6 fw-bold mb-2 d-flex align-items-center">
+                                <i class="ti ti-info-circle me-2 text-primary"></i>
+                                How to Get Started
+                            </h3>
+                            <ul class="small ps-4 mb-0">
+                                <li class="mb-1">Share your shortened link with others</li>
+                                <li class="mb-1">Visits will appear here once users click the link</li>
+                                <li>Check back later for detailed analytics</li>
+                            </ul>
+                        </div>
+                        <a href="/dashboard" class="btn btn-lg btn-primary px-4">
+                            <i class="ti ti-arrow-left me-2"></i> Back to Dashboard
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="mb-4">
+                            <div class="d-inline-block p-3 bg-danger bg-opacity-10 rounded-circle">
+                                <i class="ti ti-alert-circle fs-1 text-danger"></i>
+                            </div>
+                        </div>
+                        <h2 class="h4 fw-bold mb-3">Unable to Load Analytics</h2>
+                        <p class="text-muted mb-4">
+                            @TempData["AnalysisVisitsErrorMessage"]
+                        </p>
+                        <a href="/dashboard" class="btn btn-lg btn-primary px-4">
+                            <i class="ti ti-arrow-left me-2"></i> Return to Dashboard
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<!-- Links Table Section -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="h5 fw-bold mb-1 d-flex align-items-center">
+                            <i class="ti ti-links me-2 text-primary"></i>
+                            Your Shortened Links
+                        </h2>
+                        <p class="text-muted mb-0">Manage and track all your shortened links</p>
+                    </div>
+                    @if (Model?.Links?.LinksToViewModel?.Any() == true)
+
+                    {
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                            @Model.Links.LinksToViewModel.Count total links
+                        </span>
+                    }
+                </div>
+                <!-- Error Handling -->
+                @if (TempData["FetchAllProcessLinksErrorMessage"] != null)
+
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="ti ti-alert-circle me-2 fs-4"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Data Retrieval Error</h5>
+                                <p class="mb-2">@TempData["FetchAllProcessLinksErrorMessage"]</p>
+                                <button type="button" class="btn btn-sm btn-light" onclick="location.reload()">
+                                    <i class="ti ti-refresh me-1"></i> Try Again
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <!-- Empty State -->
+                @if (Model?.Links?.LinksToViewModel == null || !Model.Links.LinksToViewModel.Any())
+
+                {
+                    <div class="text-center py-5">
+                        <div class="mb-4">
+                            <i class="ti ti-link-off fs-2 text-muted"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-2">No Shortened Links Found</h3>
+                        <p class="text-muted mb-4" style="max-width: 500px; margin: 0 auto;">
+                            You haven't created any shortened links yet. Get started by creating your first link above.
+                        </p>
+                        <a href="#longUrlInput" class="btn btn-primary px-4 py-2 fw-semibold">
+                            <i class="ti ti-plus me-2"></i> Create Your First Link
+                        </a>
+                    </div>
+                }
+
+                else
+
+                {
+                    <!-- Scrollable Table Container -->
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;" tabindex="0"
+                         aria-label="Shortened links data table. Use arrow keys to navigate.">
+                        <table class="table table-hover align-middle mb-0"
+                               aria-label="Shortened links with analytics data"
+                               role="table">
+                            <caption class="visually-hidden">
+                                List of shortened URLs with their analytics data. Each row contains the original URL, short code, creation date, and analysis actions.
+                            </caption>
+                            <thead class="table-light sticky-top" role="rowgroup">
+                                <tr role="row">
+                                    <th scope="col" class="ps-0" role="columnheader">Original URL</th>
+                                    <th scope="col" class="text-center" role="columnheader">Short Code</th>
+                                    <th scope="col" class="text-center" role="columnheader">Created</th>
+                                    <th scope="col" class="text-center" style="width: 150px;" role="columnheader">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var link in Model.Links.LinksToViewModel)
+
+                                {
+                                    <tr role="row">
+                                        <!-- Long URL -->
+                                        <td class="ps-0" role="cell">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-2 p-1 text-center" style="width: 32px; height: 32px;">
+                                                    <i class="ti ti-world text-primary" aria-hidden="true"></i>
+                                                </div>
+                                                <a href="@link.OriginalUrl"
+                                                   target="_blank"
+                                                   rel="noopener noreferrer"
+                                                   class="text-decoration-none text-dark fw-medium d-block text-truncate"
+                                                   style="max-width: 250px;"
+                                                   title="@link.OriginalUrl"
+                                                   aria-label="View original URL: @link.OriginalUrl">
+                                                    @(link.OriginalUrl.Length > 60
+                                                        ? link.OriginalUrl.Substring(0, 60) + "..."
+                                                        : link.OriginalUrl)
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <!-- Code -->
+                                        <td class="text-center" role="cell">
+                                            <span class="d-inline-block bg-light border border-primary border-opacity-10 px-2 py-1 rounded fw-medium text-primary"
+                                                  title="@link.Code"
+                                                  aria-label="Short code: @link.Code">
+                                                @link.Code
+                                            </span>
+                                        </td>
+                                        <!-- Created At -->
+                                        <td class="text-center text-muted small" role="cell">
+                                            @DateTime.Parse(link.CreatedAt).ToString("MMM dd, yyyy")
+                                        </td>
+                                        <!-- Actions -->
+                                        <td class="text-center" role="cell">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-controller="Dashboard"
+                                                   asp-action="AnalyzeLink"
+                                                   asp-route-code="@link.Code"
+                                                   class="btn btn-sm btn-outline-primary px-3 py-1"
+                                                   title="View analytics for this link"
+                                                   aria-label="View analytics for @link.Code">
+                                                    Analyze
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Table Footer -->
+                    <div class="d-flex justify-content-between align-items-center mt-3 small text-muted">
+                        <div>
+                            <i class="ti ti-info-circle me-1"></i>
+                            Click on any URL to open in a new tab
+                        </div>
+                        <div>
+                            Showing @Model.Links.LinksToViewModel.Count
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Safely serialize analysis data
+            const analysisData = @Html.Raw(Json.Serialize(Model?.AnalyzeViewModel?.AnalysisData));
+
+            // Enhanced configuration for all charts
+            const chartConfigs = {
+                bar: {
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        toolbar: { show: false },
+                        zoom: { enabled: false }
+                    },
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 4,
+                            columnWidth: '50%',
+                            distributed: false
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        strokeDashArray: 4
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: -45,
+                            style: { fontSize: '12px' }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function (val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    tooltip: {
+                        theme: 'light'
+                    }
+                },
+                pie: {
+                    chart: {
+                        type: 'pie',
+                        height: 350,
+                        toolbar: { show: false }
+                    },
+                    labels: [],
+                    legend: {
+                        position: 'bottom',
+                        offsetY: 5
+                    },
+                    tooltip: {
+                        theme: 'light',
+                        y: {
+                            formatter: function (val, { series, seriesIndex, dataPointIndex, w }) {
+                                return `${val}% (${series[seriesIndex][dataPointIndex]})`;
+                            }
+                        }
+                    }
+                },
+                horizontalBar: {
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        toolbar: { show: false }
+                    },
+                    plotOptions: {
+                        bar: {
+                            horizontal: true,
+                            borderRadius: 4,
+                            distributed: false
+                        }
+                    },
+                    dataLabels: { enabled: false },
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        strokeDashArray: 4,
+                        padding: {
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            left: 20
+                        }
+                    },
+                    xaxis: {
+                        labels: {
+                            rotate: 0,
+                            style: {
+                                fontSize: '12px'
+                            },
+                            formatter: function (val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            style: {
+                                fontSize: '12px'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        theme: 'light'
+                    }
+                }
+            };
+
+            // Empty chart states
+            const emptyStates = {
+                bar: {
+                    series: [{ name: 'No data', data: [] }],
+                    chart: { ...chartConfigs.bar.chart },
+                    xaxis: { categories: [] },
+                    noData: {
+                        text: 'No traffic data available',
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        style: {
+                            fontSize: '14px',
+                            color: '#888'
+                        }
+                    }
+                },
+                pie: {
+                    series: [],
+                    chart: { ...chartConfigs.pie.chart },
+                    labels: [],
+                    noData: {
+                        text: 'No data available',
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        style: {
+                            fontSize: '14px',
+                            color: '#888'
+                        }
+                    }
+                },
+                horizontalBar: {
+                    series: [{ name: 'No data', data: [] }],
+                    chart: { ...chartConfigs.horizontalBar.chart },
+                    xaxis: { categories: [] },
+                    noData: {
+                        text: 'No data available',
+                        align: 'center',
+                        verticalAlign: 'middle',
+                        style: {
+                            fontSize: '14px',
+                            color: '#888'
+                        }
+                    }
+                }
+            };
+
+            // Render chart function with proper error handling
+            function renderChart(selector, config, emptyConfig) {
+                const element = document.querySelector(selector);
+                if (!element) return;
+
+                // Clear existing loading state
+                element.innerHTML = '';
+
+                // Handle empty data case
+                if (!analysisData || Object.keys(analysisData).length === 0) {
+                    element.innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-chart-off fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No analytics data available</p>
+                                </div>
+                            `;
+                    return;
+                }
+
+                // Create chart
+                try {
+                    new ApexCharts(element, config).render();
+                } catch (error) {
+                    console.error(`Error rendering chart ${selector}:`, error);
+                    element.innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-alert-circle fs-2 text-danger mb-2"></i>
+                                    <p class="text-danger mb-0">Error loading chart</p>
+                                </div>
+                            `;
+                }
+            }
+
+            // Only render charts if we have data
+            if (analysisData && analysisData.topOperatingSystems) {
+                // Visits by Hour
+                const hourlyData = analysisData.trafficByHour || analysisData.visitsByHour;
+                if (hourlyData && Object.keys(hourlyData).length > 0) {
+                    renderChart('#bar-chart', {
+                        ...chartConfigs.bar,
+                        series: [{
+                            name: 'Visits',
+                            data: Object.values(hourlyData)
+                        }],
+                        xaxis: {
+                            categories: Object.keys(hourlyData)
+                        }
+                    }, emptyStates.bar);
+                } else {
+                    document.querySelector('#bar-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-chart-line fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No traffic data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Top Countries
+                if (Object.keys(analysisData.topCountries || {}).length > 0) {
+                    renderChart('#country-chart', {
+                        ...chartConfigs.pie,
+                        series: Object.values(analysisData.topCountries),
+                        labels: Object.keys(analysisData.topCountries)
+                    }, emptyStates.pie);
+                } else {
+                    document.querySelector('#country-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-world fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No country data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Top Cities
+                if (Object.keys(analysisData.topCities || {}).length > 0) {
+                    renderChart('#city-chart', {
+                        ...chartConfigs.pie,
+                        series: Object.values(analysisData.topCities),
+                        labels: Object.keys(analysisData.topCities)
+                    }, emptyStates.pie);
+                } else {
+                    document.querySelector('#city-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-building fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No city data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Device Types
+                if (Object.keys(analysisData.topDeviceTypes || {}).length > 0) {
+                    renderChart('#device-chart', {
+                        ...chartConfigs.pie,
+                        series: Object.values(analysisData.topDeviceTypes),
+                        labels: Object.keys(analysisData.topDeviceTypes)
+                    }, emptyStates.pie);
+                } else {
+                    document.querySelector('#device-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-device-laptop fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No device data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Browsers
+                if (Object.keys(analysisData.topBrowsers || {}).length > 0) {
+                    renderChart('#browser-chart', {
+                        ...chartConfigs.bar,
+                        series: [{
+                            name: 'Visits',
+                            data: Object.values(analysisData.topBrowsers)
+                        }],
+                        xaxis: {
+                            categories: Object.keys(analysisData.topBrowsers)
+                        }
+                    }, emptyStates.bar);
+                } else {
+                    document.querySelector('#browser-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-browser fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No browser data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Operating Systems - FIXED IMPLEMENTATION
+                if (Object.keys(analysisData.topOperatingSystems || {}).length > 0) {
+                    renderChart('#os-chart', {
+                        ...chartConfigs.horizontalBar,
+                        series: [{
+                            name: 'Visits',
+                            data: Object.values(analysisData.topOperatingSystems)
+                        }],
+                        xaxis: {
+                            categories: Object.keys(analysisData.topOperatingSystems),
+                            labels: {
+                                formatter: function (val) {
+                                    return Math.round(val);
+                                }
+                            }
+                        },
+                        yaxis: {
+                            labels: {
+                                style: {
+                                    fontSize: '12px'
+                                }
+                            }
+                        }
+                    }, emptyStates.horizontalBar);
+                } else {
+                    document.querySelector('#os-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-brand-windows fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No OS data recorded yet</p>
+                                </div>
+                            `;
+                }
+
+                // Country Visit Percentages
+                if (Object.keys(analysisData.countryVisitPercentages || {}).length > 0) {
+                    renderChart('#country-percent-chart', {
+                        ...chartConfigs.pie,
+                        series: Object.values(analysisData.countryVisitPercentages),
+                        labels: Object.keys(analysisData.countryVisitPercentages)
+                    }, emptyStates.pie);
+                } else {
+                    document.querySelector('#country-percent-chart').innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-percentage fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No country percentage data recorded yet</p>
+                                </div>
+                            `;
+                }
+            } else {
+                // Render empty states for all charts when no data is available
+                document.querySelectorAll('.chart-container').forEach(container => {
+                    container.innerHTML = `
+                                <div class="d-flex flex-column align-items-center justify-content-center h-100">
+                                    <i class="ti ti-chart-off fs-2 text-muted mb-2"></i>
+                                    <p class="text-muted mb-0">No analytics data available</p>
+                                </div>
+                            `;
+                });
+            }
+        });
+    </script>
+}

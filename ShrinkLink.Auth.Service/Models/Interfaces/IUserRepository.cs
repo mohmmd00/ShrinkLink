@@ -5,6 +5,7 @@ namespace ShrinkLink.Auth.Service.Models.Interfaces
     {
          Task CreateAsync(User user , CancellationToken ct);
          Task<bool> IsUserExistsByUsername(string username, CancellationToken ct);
+         Task<bool> IsUserExistsByEmail(string email, CancellationToken ct = default);
          Task<User> FetchUserByUsername(string username, CancellationToken ct = default);
          Task<User> FetchUserById(string id, CancellationToken ct = default);
 

@@ -63,6 +63,10 @@ namespace ShrinkLink.UrlShortener.Service.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ClickedAt")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -104,7 +108,7 @@ namespace ShrinkLink.UrlShortener.Service.Migrations
             modelBuilder.Entity("ShrinkLink.UrlShortener.Service.Models.Entities.Visitor", b =>
                 {
                     b.HasOne("ShrinkLink.UrlShortener.Service.Models.Entities.ProcessedUrl", "ProcessedUrl")
-                        .WithMany("Visitors")
+                        .WithMany("VisitorsAsData")
                         .HasForeignKey("ShortenGuidId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -114,7 +118,7 @@ namespace ShrinkLink.UrlShortener.Service.Migrations
 
             modelBuilder.Entity("ShrinkLink.UrlShortener.Service.Models.Entities.ProcessedUrl", b =>
                 {
-                    b.Navigation("Visitors");
+                    b.Navigation("VisitorsAsData");
                 });
 #pragma warning restore 612, 618
         }

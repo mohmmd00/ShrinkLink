@@ -1,0 +1,341 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model ShrinkLink.WebApp.Models.DashBoardBindingModels.LinkModel
+@{
+    Layout = "_DashboardLayout";
+    ViewData["Title"] = "Link Management";
+}
+
+
+<!-- Top Row: Form Card and Explanation Card -->
+<div class="row g-4 mb-4">
+    <!-- Create Short Link Section -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 p-md-5">
+                <header class="mb-4 text-center">
+                    <h1 class="h3 fw-bold mb-2">Create Short Link</h1>
+                    <p class="text-muted mb-0">Enter any URL to create a shortened, trackable link</p>
+                </header>
+
+                <!-- Error Alert -->
+                @if (TempData["ProcessLinkErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="ti ti-alert-circle me-2 fs-4"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Link Creation Error</h5>
+                                <p class="mb-0">@TempData["ProcessLinkErrorMessage"]</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form asp-controller="Dashboard" asp-action="Shortener" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-4">
+                        <label for="longUrlInput" class="form-label fw-semibold">
+                            Enter Long URL <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text bg-light">
+                                <i class="ti ti-link text-primary" aria-hidden="true"></i>
+                            </span>
+                            <input asp-for="LonglinkModel.LongLink"
+                                   value="@TempData["LongLink"]"
+                                   class="form-control form-control-lg"
+                                   id="longUrlInput"
+                                   placeholder="https://example.com"
+                                   required
+                                   aria-describedby="urlHelp"
+                                   maxlength="2048"
+                                   autofocus />
+                        </div>
+                        <div id="urlHelp" class="form-text mt-2">
+                            <i class="ti ti-info-circle text-primary me-1"></i>
+                            Enter any valid URL (max 2048 characters)
+                        </div>
+                        <span asp-validation-for="LonglinkModel.LongLink" class="text-danger small d-block mt-1"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-lg btn-primary w-100 py-3 fw-semibold">
+                        <i class="ti ti-cut me-2"></i> Create Short Link
+                    </button>
+                </form>
+
+                <!-- Shortened URL Result -->
+                @if (TempData["ShortLink"] != null)
+                {
+                    <div class="mt-4 p-3 bg-light rounded-3">
+                        <div class="d-flex flex-column flex-md-row align-items-start gap-3">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-semibold">Your Shortened URL</label>
+                                <div class="input-group">
+                                    <input type="text"
+                                           class="form-control form-control-lg"
+                                           id="shortUrlInput"
+                                           value="@TempData["ShortLink"]"
+                                           readonly
+                                           aria-label="Shortened URL" />
+                                    <button class="btn btn-lg btn-outline-primary" type="button" id="copyShortUrlBtn">
+                                        <i class="ti ti-copy me-2 d-none d-md-inline-block"></i> Copy Link
+                                    </button>
+                                </div>
+                                <div id="copyFeedback" class="feedback-toast mt-2 d-none" role="status" aria-live="polite">
+                                    <div class="d-flex align-items-center bg-success text-white px-3 py-2 rounded-2 small">
+                                        <i class="ti ti-check me-2"></i>
+                                        <span>Link copied to clipboard!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanation Card -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <h2 class="h4 fw-bold mb-0">About Link Management</h2>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <i class="ti ti-shield me-2 text-primary"></i>
+                        Secure Link Shortening
+                    </h3>
+                    <p class="text-muted mb-0">
+                        All shortened links are created with enterprise-grade security. Your data is encrypted in transit and at rest, ensuring your links remain private and secure.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <i class="ti ti-chart-bar me-2 text-primary"></i>
+                        Comprehensive Analytics
+                    </h3>
+                    <p class="text-muted mb-0">
+                        Track clicks, geographic locations, device types, and more for each shortened link. Gain valuable insights into your audience's behavior and campaign performance.
+                    </p>
+                </div>
+
+                <div class="mb-0">
+                    <h3 class="h5 fw-bold mb-3 d-flex align-items-center">
+                        <i class="ti ti-world me-2 text-primary"></i>
+                        Global Performance
+                    </h3>
+                    <p class="text-muted mb-0">
+                        Our globally distributed infrastructure ensures your shortened links resolve quickly from anywhere in the world, with 99.9% uptime guarantee.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2 class="h5 fw-bold mb-1 d-flex align-items-center">
+                            <i class="ti ti-links me-2 text-primary"></i>
+                            Your Shortened Links
+                        </h2>
+                        <p class="text-muted mb-0">Manage and track all your shortened links</p>
+                    </div>
+                    @if (Model?.LinksViewModel?.LinksToViewModel?.Any() == true)
+                    {
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                            @Model.LinksViewModel.LinksToViewModel.Count total links
+                        </span>
+                    }
+                </div>
+
+                @if (TempData["FetchAllProcessLinksErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="ti ti-alert-circle me-2 fs-4"></i>
+                            <div>
+                                <h5 class="alert-heading mb-1">Data Retrieval Error</h5>
+                                <p class="mb-0">@TempData["FetchAllProcessLinksErrorMessage"]</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (Model?.LinksViewModel?.LinksToViewModel?.Any() == true)
+                {
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th scope="col" class="ps-2">Original URL</th>
+                                    <th scope="col" class="text-center">Short Code</th>
+                                    <th scope="col" class="text-center">Created</th>
+                                    <th scope="col" class="text-center" style="width: 180px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var link in Model.LinksViewModel.LinksToViewModel)
+                                {
+                                    <tr>
+                                        <!-- Long URL -->
+                                        <td class="ps-0">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-2 p-2 text-center" style="width: 32px; height: 32px;">
+                                                    <i class="ti ti-world text-primary"></i>
+                                                </div>
+                                                <a href="@link.OriginalUrl" target="_blank" class="text-decoration-none text-dark fw-medium d-block text-truncate" style="max-width: 250px;" title="@link.OriginalUrl">
+                                                    @(link.OriginalUrl.Length > 40
+                                                        ? link.OriginalUrl.Substring(0, 40) + "..."
+                                                        : link.OriginalUrl)
+                                                </a>
+                                            </div>
+                                        </td>
+
+                                        <!-- Code -->
+                                        <td class="text-center">
+                                            <span class="d-inline-block bg-light px-2 py-1 rounded fw-medium text-primary">@link.Code</span>
+                                        </td>
+
+                                        <!-- Created At -->
+                                        <td class="text-center text-muted">
+                                            @DateTime.Parse(link.CreatedAt).ToString("MMM dd, yyyy")
+                                        </td>
+
+                                        <!-- Actions -->
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-controller="Dashboard"
+                                                   asp-action="AnalyzeLink"
+                                                   asp-route-code="@link.Code"
+                                                   class="btn btn-sm btn-outline-primary px-3 py-1"
+                                                   title="View analytics for this link">
+                                                     Analyze
+                                                </a>
+                                                <a asp-controller="Dashboard"
+                                                   asp-action="RemoveLink"
+                                                   asp-route-code="@link.Code"
+                                                   class="btn btn-sm btn-outline-danger px-3 py-1"
+                                                   title="Remove this link"
+                                                   data-bs-toggle="modal"
+                                                   data-bs-target="#removeModal-@link.Code">
+                                                     Remove
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Remove Confirmation Modal -->
+                                    <div class="modal fade" id="removeModal-@link.Code" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content border-0 shadow-sm">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title fw-bold">Confirm Removal</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        <div class="me-3 p-2 bg-danger bg-opacity-10 rounded-circle">
+                                                            <i class="ti ti-alert-circle text-danger fs-4"></i>
+                                                        </div>
+                                                        <h6 class="mb-0">Are you sure you want to remove this link?</h6>
+                                                    </div>
+                                                    <p class="text-muted mb-0">
+                                                        Short code: <strong>@link.Code</strong><br />
+                                                        This action cannot be undone.
+                                                    </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <a asp-controller="Dashboard"
+                                                       asp-action="RemoveLink"
+                                                       asp-route-code="@link.Code"
+                                                       class="btn btn-danger">
+                                                        <i class="ti ti-trash me-1"></i> Remove Link
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <div class="mb-3">
+                            <i class="ti ti-link-off fs-1 text-muted"></i>
+                        </div>
+                        <h3 class="h6 fw-bold mb-1">No Shortened Links Found</h3>
+                        <p class="text-muted mb-0">Create your first shortened link from the dashboard</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Copy functionality with modern Clipboard API
+            const copyBtn = document.getElementById('copyShortUrlBtn');
+            const copyFeedback = document.getElementById('copyFeedback');
+
+            if (copyBtn) {
+                copyBtn.addEventListener('click', async () => {
+                    const shortUrlInput = document.getElementById('shortUrlInput');
+                    const url = shortUrlInput.value;
+
+                    try {
+                        await navigator.clipboard.writeText(url);
+
+                        // Show feedback
+                        copyFeedback.classList.remove('d-none');
+                        setTimeout(() => {
+                            copyFeedback.classList.add('d-none');
+                        }, 2500);
+
+                        // Accessibility: announce for screen readers
+                        const alert = document.createElement('div');
+                        alert.className = 'visually-hidden';
+                        alert.setAttribute('aria-live', 'assertive');
+                        alert.textContent = 'Link copied to clipboard';
+                        document.body.appendChild(alert);
+                        setTimeout(() => document.body.removeChild(alert), 1000);
+
+                    } catch (err) {
+                        console.error('Copy failed:', err);
+                        // Fallback for older browsers
+                        shortUrlInput.select();
+                        document.execCommand('copy');
+
+                        copyFeedback.classList.remove('d-none');
+                        setTimeout(() => copyFeedback.classList.add('d-none'), 2500);
+                    }
+                });
+            }
+
+            // Auto-focus on long URL input if there's an error
+        @if (TempData["ProcessLinkErrorMessage"] != null)
+        {
+            <text>
+                        document.getElementById('longUrlInput').focus();
+            </text>
+        }
+                });
+    </script>
+}

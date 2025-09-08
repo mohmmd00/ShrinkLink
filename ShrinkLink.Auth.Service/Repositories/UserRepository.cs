@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using ShrinkLink.Auth.Service.Models.Entities;
 using ShrinkLink.Auth.Service.Models.Interfaces;
 
@@ -35,6 +36,12 @@ namespace ShrinkLink.Auth.Service.Repositories
         {
             var selectedUser = await _context.Users.FirstOrDefaultAsync(x => x.Id.ToString() == id, ct);
             return selectedUser;
+        }
+
+
+        public async Task<bool> IsUserExistsByEmail(string email, CancellationToken ct = default)
+        {
+            return await _context.Users.AnyAsync(x => x.Email == email, ct);
         }
     }
 }

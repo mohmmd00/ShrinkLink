@@ -4,7 +4,7 @@
     {
         public Guid Id { get; }
         public string OriginalUrl { get; private set; }
-        public Guid UserId { get; private set; }
+        public Guid UserId { get;private set; }
         public string Code { get; private set; }
         public string CreatedAt { get; private set; } // beware of the change of this property !!!!
 

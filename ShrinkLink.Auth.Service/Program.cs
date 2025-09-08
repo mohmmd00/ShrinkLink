@@ -25,10 +25,11 @@ namespace ShrinkLink.Auth.Service
 
 
 
-            builder.Services.AddScoped<AuthorizationService>();
+            builder.Services.AddScoped<IAuthService, Services.AuthService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-
             builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+
+
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -45,6 +46,13 @@ namespace ShrinkLink.Auth.Service
                             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                     };
                 });
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowWebApp", builder =>
+                {
+                    builder.WithOrigins("https://localhost:7233").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+                });
+            });
 
 
             builder.Services.AddControllers();
@@ -61,8 +69,10 @@ namespace ShrinkLink.Auth.Service
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            app.UseCors("AllowWebApp");
 
+            //app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
